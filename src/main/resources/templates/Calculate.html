@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Расчет</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="icon" th:href="favicon.ico"/>
+</head>
+<body>
+    <div id="header">
+        <div class="content">
+            <h2 style="text-align: center;">Рассчитать ?</h2>
+            <br>
+            <form th:action="@{/calculate}" method="post">
+                <input class="input center-block" style="text-align: center;" id="submit" th:type="submit" th:value="Рассчитать"/>
+            </form>
+            <br>
+            <div th:if="${message != null}">
+                <h1 style="color: brown" th:text="${message}"></h1>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <h4>&copy; 2021-2023 ООО &laquo;Аудит и Право Плюс&raquo; &trade; &reg;</h4>
+    </div>
+</body>
+</html>

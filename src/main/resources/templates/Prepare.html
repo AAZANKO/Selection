@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Подготовка</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="icon" th:href="favicon.ico"/>
+</head>
+<body>
+    <div id="header">
+        <div class="content">
+            <h2 style="color: red; text-align: center;">Подготовьте файлы для выборки</h2>
+            <br>
+            <h3 style="text-align: center;">Программа обрабатывает файлы только с расширением .xlsx</h3>
+            <h3 style="text-align: center;">Откройте карточки в Excel 2016 и выше</h3>
+            <h3 style="text-align: center;">Сохраните файлы с расширением .xlsx</h3>
+            <br>
+            <form th:action="@{/open-card}" method="get">
+                <input class="input center-block" style="text-align: center;" id="submit" th:type="submit" th:value="Продолжить"/>
+            </form>
+        </div>
+    </div>
+    <div id="footer">
+        <h4>&copy; 2021-2023 ООО &laquo;Аудит и Право Плюс&raquo; &trade; &reg;</h4>
+    </div>
+</body>
+</html>

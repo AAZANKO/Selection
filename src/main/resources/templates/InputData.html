@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Исходные данные</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="icon" th:href="favicon.ico"/>
+</head>
+<body>
+    <div id="header">
+        <div class="content">
+            <h2 style="text-align: center;">Заполните все поля исходными данными</h2>
+            <form th:action="@{/input-data}" method="post">
+                <h4>Определение объема выборки:</h4>
+                <table>
+                    <tr>
+                        <td>
+                            <label>Аудиторский риск</label>
+                        </td>
+                        <td>
+                            <select id="risk" name="risk">
+                                <option th:each="value : ${auditRiskMap}" th:text="${value.value}" th:value="${value.key}">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Фактор надежности</label>
+                        </td>
+                        <td>
+                            <input id="factor" type="text" name="factor"
+                                   th:value="${factor}" placeholder="3.0"/>
+                            <label>коэффициент</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Уровень существенности для данного раздела</label>
+                        </td>
+                        <td>
+                            <input id="level" type="text" name="level"
+                                   th:value="${level}"
+                                   placeholder="2000"/>
+                            <label>тыс.руб.</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Элементы рандомной стоимости и ключевые элементы</label>
+                        </td>
+                        <td>
+                            <input id="countRandomElement" type="text" name="countRandomElement"
+                                   th:value="${countRandomElement}" placeholder="13" readonly/>
+                            <label>количество</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Элементы наибольшей стоимости и ключевые элементы</label>
+                        </td>
+                        <td>
+                            <input id="countMaxElement" type="text" name="countMaxElement"
+                                   th:value="${countMaxElement}" placeholder="5" readonly/>
+                            <label>количество</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Счет (или субсчет)</label>
+                        </td>
+                        <td>
+                            <textarea rows="3" cols="30" name="account" th:value="${account}" placeholder="52 или (10.13)"></textarea>
+                        </td>
+                    </tr>
+                </table>
+                <div th:if="${message != null}">
+                    <br>
+                    <h1 style="color: brown" th:text="${message}"></h1>
+                </div>
+                <input class="input center-block" style="text-align: center;" id="submit" th:type="submit" th:value="Продолжить"/>
+            </form>
+        </div>
+    </div>
+    <div id="footer">
+        <h4>&copy; 2021-2023 ООО &laquo;Аудит и Право Плюс&raquo; &trade; &reg;</h4>
+    </div>
+</body>
+</html>

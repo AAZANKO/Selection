@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .loader {
+            border: 6px solid black;
+            border-radius: 50%;
+            border-top: 6px solid black;
+            border-bottom: 6px solid red;
+            width: 40px;
+            height: 40px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 1.2s linear infinite;
+        }
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        function changeColor(newColor) {
+            const elem = document.getElementById("para");
+            elem.style.color = newColor;}
+
+        function startLoading() {
+            let elementById = document.getElementById("loader");
+            elementById.classList.remove("loader");
+        }
+        function endLoading() {
+            let elementById = document.getElementById("loader");
+            elementById.classList.add("loader");
+        }
+    </script>
+</head>
+<body>
+    <h2>How To Create A Loader</h2>
+    <br>
+    <div class="loader"></div>
+    <br>
+    <div><input type="submit" onclick="myfunction()" value="Продолжить"/></div>
+    <br>
+    <div id="loader" class="loader"></div>
+    <br>
+    <p id="para">Some text here</p>
+    <button onclick="changeColor('blue');">blue</button>
+    <button onclick="changeColor('red');">red</button>
+    <br>
+    <button onclick="startLoading();">Remove</button>
+    <button onclick="endLoading();">Add</button>
+
+</body>
+</html>

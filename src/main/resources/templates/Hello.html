@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Приветствие</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="icon" th:href="favicon.ico"/>
+</head>
+<body>
+    <div id="header">
+        <div class="content">
+            <h2 style="text-align: center;">Данная программа собственность компании</h2>
+            <h2 style="text-align: center;">ООО &laquo;Аудит и Право&raquo;</h2>
+            <br>
+            <h2 style="text-align: center;">Использование программы без разрешения компании ООО &laquo;Аудит и Право Плюс&raquo;</h2>
+            <h1 style="text-align: center; color: red;">Запрещено!</h1>
+            <br>
+            <br>
+            <form th:action="@{/prepare}" method="get">
+                <input class="input center-block" style="text-align: center;" id="submit" th:type="submit" th:value="Продолжить"/>
+            </form>
+        </div>
+    </div>
+    <div id="footer">
+        <h4>&copy; 2021-2023 ООО &laquo;Аудит и Право Плюс&raquo; &trade; &reg;</h4>
+    </div>
+
+</body>
+</html>

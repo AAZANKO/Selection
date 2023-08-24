@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Загрузка Карточек</title>
+        <link rel="stylesheet" th:href="@{/css/style.css}"/>
+        <link rel="icon" th:href="favicon.ico"/>
+    </head>
+    <body>
+        <div id="header">
+            <div class="content">
+                <h2 style="text-align: center;">Выберите <span style="color: red;">Карточки</span> для выборки</h2>
+                <br>
+                <form th:action="@{/open-card}" enctype="multipart/form-data" method="post">
+                    <input class="input-file" type="file" name="files" multiple>
+                    <br>
+                    <br>
+                    <input class="input center-block" style="text-align: center;" id="submit" th:type="submit" th:value="Продолжить"/>
+                </form>
+                <br>
+                <div th:if="${message != null}">
+                    <h1 style="color: brown"  th:text="${message}"></h1>
+                </div>
+                <div th:if="${messageTrue != null}">
+                    <h1 style="color: darkgreen"  th:text="${messageTrue}"></h1>
+                </div>
+            </div>
+        </div>
+        <div id="footer">
+            <h4>&copy; 2021-2023 ООО &laquo;Аудит и Право Плюс&raquo; &trade; &reg;</h4>
+        </div>
+    </body>
+</html>
