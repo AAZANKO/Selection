@@ -16,11 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+import static by.auditsalution.selection.model.ExcelFormatType.XLSX;
 import static by.auditsalution.selection.model.InputOutputType.INPUT;
 
 @Controller
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SaldoController {
+
+    private static final int EXTENSION_COUNT_CHAR = 4;
 
     private final CardServiceImpl openFileService;
     @GetMapping("/open-saldo")
@@ -58,6 +61,14 @@ public class SaldoController {
     }
 
     private boolean isValidNameFiles(List<MultipartFile> files) {
-        return false;
+        for (MultipartFile file : files) {
+            String originalFileName = file.getOriginalFilename().trim();
+            String extension = originalFileName.substring(originalFileName.length() - EXTENSION_COUNT_CHAR);
+            String extensionReplacePunctuation = extension.replace(".", "");
+            if (!XLSX.getDescription().equals(extensionReplacePunctuation.toLowerCase())) {
+                return false;
+            }
+        }
+        return true;
     }
 }

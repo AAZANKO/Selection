@@ -29,7 +29,7 @@ import static by.auditsalution.selection.model.InputOutputType.INPUT;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CardController {
     private final CardServiceImpl openFileService;
-    public static final int EXTENSION_COUNT_CHAR = 4;
+    private static final int EXTENSION_COUNT_CHAR = 4;
     @GetMapping("/open-card")
     public String getOpenFilePage() {
         return "OpenCard";
