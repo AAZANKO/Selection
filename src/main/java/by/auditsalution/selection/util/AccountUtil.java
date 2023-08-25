@@ -27,48 +27,47 @@ public class AccountUtil {
      * - если одна точка - то по счетам с точкой
      * - если две точки - то сразу по
      *
-     * @param value
+     * @param originalAccount
      * @return
      */
-    public static Account getAccount(String value){
-        String searchAccount = value;
-        if (value.contains(".")){
-            List<String> splitList = Arrays.asList(value.split("\\."));
+    public static Optional<Account> getAccount(String originalAccount){
+        String searchAccount = originalAccount;
+        if (originalAccount.contains(".")){
+            List<String> splitList = Arrays.asList(originalAccount.split("\\."));
             List<String> splitArrayList = new ArrayList<>(splitList);
             if (splitArrayList.size() == 3){
-                for (Account day : Account.values()) {
-                    if (day.getValue().equals(searchAccount)){
-                        return day;
+                for (Account account : Account.values()) {
+                    if (account.getValue().equals(searchAccount)){
+                        return Optional.of(account);
                     }
                 }
                 splitArrayList.remove(2);
                 searchAccount = new StringBuilder().append(splitArrayList.get(0)).append(".").append(splitArrayList.get(1)).toString();
             }
             if (splitArrayList.size() == 2){
-                for (Account day : Account.values()) {
-                    if (day.getValue().equals(searchAccount)){
-                        return day;
+                for (Account account : Account.values()) {
+                    if (account.getValue().equals(searchAccount)){
+                        return Optional.of(account);
                     }
                 }
                 splitArrayList.remove(1);
                 searchAccount = splitArrayList.get(0);
             }
             if (splitArrayList.size() == 1){
-                for (Account day : Account.values()) {
-                    if (day.getValue().equals(searchAccount)){
-                        return day;
+                for (Account account : Account.values()) {
+                    if (account.getValue().equals(searchAccount)){
+                        return Optional.of(account);
                     }
                 }
             }
         } else {
-            for (Account day : Account.values()) {
-                if (day.getValue().equals(searchAccount)) {
-                    return day;
+            for (Account account : Account.values()) {
+                if (account.getValue().equals(searchAccount)) {
+                    return Optional.of(account);
                 }
             }
         }
-        // TODO: 26.06.2023 null возвращать плохо -- вернуть ошибку new Thread();
-        return null;
+        return Optional.empty();
     }
 
 }

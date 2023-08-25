@@ -65,10 +65,13 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Map<Account, List<Card>> convertToCards(List<Card1CTemp> card1CTempList) {
-        if (Version1C.VERSION_1C_7.equals(Version1CUtil.checkVersion1C(card1CTempList))) {
+        Version1C version1C = Version1CUtil.checkVersion1C(card1CTempList);
+        if (Version1C.VERSION_1C_7.equals(version1C)) {
             return cardConverter.getCard1CV7Of(card1CTempList);
-        } else {
+        } else if (Version1C.VERSION_1C_8.equals(version1C)){
             return cardConverter.getCard1CV8Of(card1CTempList);
+        } else {
+            throw new ServiceException("Не удалось определить версию 1С");
         }
     }
 

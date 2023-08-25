@@ -28,11 +28,24 @@ public class InputDataController {
         return initializationAuditRiskMap();
     }
 
+    /**
+     * Захардкожено кол-во элементов выборки
+     */
+    @ModelAttribute("countRandomElement")
+    public String countRandomElement(){
+        return COUNT_RANDOM_VALUE;
+    }
+
+    @ModelAttribute("countMaxElement")
+    public String countMaxElement(){
+        return COUNT_MAX_VALUE;
+    }
+
     @GetMapping("/input-data")
     public String getInputDataPage(HttpSession session, Model model) {
         if (session.getAttribute("accountListMap") == null){
             model.addAttribute("message", "Не выбрано ни однаго документа");
-            return "OpenCard";
+            return "redirect:/open-saldo";
         }
         return "InputData";
     }
@@ -68,7 +81,7 @@ public class InputDataController {
             model.addAttribute("account", account);
             return "inputData";
         } else {
-            InitialData initialValue = createInitializationValue(risk, factor, level, COUNT_MAX_VALUE, COUNT_RANDOM_VALUE, account, verificationAccount(account));
+            InitialData initialValue = createInitializationValue(risk, factor, level, countMaxElement, countRandomElement, account, verificationAccount(account));
             session.setAttribute("initialValue", initialValue);
             return "redirect:/calculate";
         }

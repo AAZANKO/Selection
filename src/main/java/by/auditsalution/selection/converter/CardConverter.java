@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class CardConverter {
@@ -29,22 +30,26 @@ public class CardConverter {
          */
         Map<Account, List<Card>> accountListMap = AccountUtil.getEmptyAccountListMap();
         List<Card> card1C7List = new ArrayList<>(card1CTemps.size());
-        Account account = null;
+        Optional<Account> account = Optional.empty();
         for (Card1CTemp card1CTemp : card1CTemps) {
             if (Card1CUtil.isCardNumber(card1CTemp.getCell0())){
 
-                if (account != null && !card1C7List.isEmpty()){
-                    accountListMap.put(account, card1C7List);
+                if (account.isPresent() && !card1C7List.isEmpty()){
+                    accountListMap.put(account.get(), card1C7List);
                     card1C7List = new ArrayList<>(card1CTemps.size());
                 }
 
                 String accountFromCardNumber = Card1CUtil.getAccountFromCardNumber(card1CTemp.getCell0());
-                account = AccountUtil.getAccount(accountFromCardNumber);
+
+                // TODO: 25.08.2023 проверить есть ли замена ???????????
+                if (false){
+//                    accountFromCardNumber
+                }else {
+                    account = AccountUtil.getAccount(accountFromCardNumber);
+                }
                 if (account == null){
                     throw new ServiceException("Не найден счет из карты...!!!");
                 }
-
-
             }
             if (isOperationRows(card1CTemp)){
                 Card card1C = new Card();
@@ -73,8 +78,8 @@ public class CardConverter {
                         .build());
             }
         }
-        if (account != null && !card1C7List.isEmpty()){
-            accountListMap.put(account, card1C7List);
+        if (account.isPresent() && !card1C7List.isEmpty()){
+            accountListMap.put(account.get(), card1C7List);
         }
         return accountListMap;
     }

@@ -5,6 +5,7 @@ import by.auditsalution.selection.model.Account;
 import by.auditsalution.selection.model.Card;
 import by.auditsalution.selection.model.Card1CTemp;
 import by.auditsalution.selection.service.impl.CardServiceImpl;
+import by.auditsalution.selection.util.ExcelUtil;
 import by.auditsalution.selection.util.FilePathUtil;
 import by.auditsalution.selection.util.FileUtil;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ import static by.auditsalution.selection.model.InputOutputType.INPUT;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CardController {
     private final CardServiceImpl openFileService;
-    private static final int EXTENSION_COUNT_CHAR = 4;
+
     @GetMapping("/open-card")
     public String getOpenFilePage() {
         return "OpenCard";
@@ -37,9 +38,11 @@ public class CardController {
 
     @PostMapping("/open-card")
     public String postSubmit(@RequestParam("files") List<MultipartFile> files, Model model, HttpSession session) {
+        // TODO: 25.08.2023  положить в сессию!!!!!!!
+        //        Map<Account, List<Card>> accountListMap = (Map<Account, List<Card>>) session.getAttribute("accountListMap");
         model.addAttribute("files", files);
         if (!files.get(0).isEmpty()) {
-            if (isValidFormat(files)) {
+            if (ExcelUtil.isValidNameFiles(files)) {
                 try {
                     String pathToFiles = FilePathUtil.getPathAndCreatePackage(INPUT.getDescription(), "card");
                     FileUtil.copy(files, pathToFiles);
@@ -61,18 +64,6 @@ public class CardController {
             return "OpenCard";
         }
         return "redirect:/open-saldo";
-    }
-
-    private boolean isValidFormat(List<MultipartFile> files) {
-        for (MultipartFile file : files) {
-            String originalFileName = file.getOriginalFilename().trim();
-            String extension = originalFileName.substring(originalFileName.length() - EXTENSION_COUNT_CHAR);
-            String extensionReplacePunctuation = extension.replace(".", "");
-            if (!XLSX.getDescription().equals(extensionReplacePunctuation.toLowerCase())) {
-                return false;
-            }
-        }
-        return true;
     }
 
 }

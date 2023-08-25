@@ -2,6 +2,7 @@ package by.auditsalution.selection.controller;
 
 import by.auditsalution.selection.exception.ServiceException;
 import by.auditsalution.selection.service.impl.CardServiceImpl;
+import by.auditsalution.selection.util.ExcelUtil;
 import by.auditsalution.selection.util.FilePathUtil;
 import by.auditsalution.selection.util.FileUtil;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,6 @@ import static by.auditsalution.selection.model.InputOutputType.INPUT;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SaldoController {
 
-    private static final int EXTENSION_COUNT_CHAR = 4;
-
     private final CardServiceImpl openFileService;
     @GetMapping("/open-saldo")
     public String getOpenFilePage() {
@@ -35,7 +34,7 @@ public class SaldoController {
     public String postSubmit(@RequestParam("files") List<MultipartFile> files, Model model, HttpSession session) {
         model.addAttribute("files", files);
         if (!files.get(0).isEmpty()) {
-            if (isValidNameFiles(files)) {
+            if (ExcelUtil.isValidNameFiles(files)) {
                 try {
                     String pathToFiles = FilePathUtil.getPathAndCreatePackage(INPUT.getDescription(), "saldo");
                     FileUtil.copy(files, pathToFiles);
@@ -55,20 +54,8 @@ public class SaldoController {
             }
         } else {
             model.addAttribute("message", "Вы не выбрали файлы...!!!");
-            return "OpenCard";
+            return "OpenSaldo";
         }
         return "redirect:/input-data";
-    }
-
-    private boolean isValidNameFiles(List<MultipartFile> files) {
-        for (MultipartFile file : files) {
-            String originalFileName = file.getOriginalFilename().trim();
-            String extension = originalFileName.substring(originalFileName.length() - EXTENSION_COUNT_CHAR);
-            String extensionReplacePunctuation = extension.replace(".", "");
-            if (!XLSX.getDescription().equals(extensionReplacePunctuation.toLowerCase())) {
-                return false;
-            }
-        }
-        return true;
     }
 }
