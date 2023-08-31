@@ -14,7 +14,7 @@ public class PrepareController {
 
     @PostMapping("/prepare")
     public String sendRedirect(){
-        return "OpenCard";
+        return "InputData";
     }
 
 }

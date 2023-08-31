@@ -12,6 +12,6 @@ public interface CardService {
 
     List<Card1CTemp> createCardTempFromFiles(String inputFilePath) throws ServiceException;
 
-    Map<Account, List<Card>> convertToCards(List<Card1CTemp> card1CTempList);
+    Map<Account, List<Card>> convertToCards(List<Card1CTemp> card1CTempList, Map<String, Account> replacementAccountMap);
 
 }

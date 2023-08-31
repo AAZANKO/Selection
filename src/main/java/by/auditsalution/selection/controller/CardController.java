@@ -21,7 +21,6 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
-import static by.auditsalution.selection.model.ExcelFormatType.XLSX;
 import static by.auditsalution.selection.model.InputOutputType.INPUT;
 
 // TODO: 26.07.2023 ЗАИСПОЛЬЗОВАТЬ !!!
@@ -38,16 +37,14 @@ public class CardController {
 
     @PostMapping("/open-card")
     public String postSubmit(@RequestParam("files") List<MultipartFile> files, Model model, HttpSession session) {
-        // TODO: 25.08.2023  положить в сессию!!!!!!!
-        //        Map<Account, List<Card>> accountListMap = (Map<Account, List<Card>>) session.getAttribute("accountListMap");
-        model.addAttribute("files", files);
+        Map<String, Account> replacementAccountMap = (Map<String, Account>) session.getAttribute("replacementAccountMap");
         if (!files.get(0).isEmpty()) {
             if (ExcelUtil.isValidNameFiles(files)) {
                 try {
                     String pathToFiles = FilePathUtil.getPathAndCreatePackage(INPUT.getDescription(), "card");
                     FileUtil.copy(files, pathToFiles);
                     List<Card1CTemp> card1CTempList = openFileService.createCardTempFromFiles(pathToFiles);
-                    Map<Account, List<Card>> accountListMap = openFileService.convertToCards(card1CTempList);
+                    Map<Account, List<Card>> accountListMap = openFileService.convertToCards(card1CTempList, replacementAccountMap);
                     if (session.getAttribute("accountListMap") != null) {
                         session.removeAttribute("accountListMap");
                     }

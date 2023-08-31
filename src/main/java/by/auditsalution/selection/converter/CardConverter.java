@@ -18,7 +18,7 @@ public class CardConverter {
     private static final String AMOUNT = "Кол-во";
     private static final String CURRENCY = "В валюте";
 
-    public Map<Account, List<Card>> getCard1CV7Of(List<Card1CTemp> card1CTemps) {
+    public Map<Account, List<Card>> getCard1CV7Of(List<Card1CTemp> card1CTemps, Map<String, Account> replacementAccountMap) {
         /**
          * создать Темп Мап, добавлять туда счиатнные счета
          *
@@ -33,21 +33,22 @@ public class CardConverter {
         Optional<Account> account = Optional.empty();
         for (Card1CTemp card1CTemp : card1CTemps) {
             if (Card1CUtil.isCardNumber(card1CTemp.getCell0())){
-
                 if (account.isPresent() && !card1C7List.isEmpty()){
                     accountListMap.put(account.get(), card1C7List);
                     card1C7List = new ArrayList<>(card1CTemps.size());
                 }
-
                 String accountFromCardNumber = Card1CUtil.getAccountFromCardNumber(card1CTemp.getCell0());
-
-                // TODO: 25.08.2023 проверить есть ли замена ???????????
-                if (false){
-//                    accountFromCardNumber
-                }else {
+                if (replacementAccountMap != null && !replacementAccountMap.isEmpty()){
+                    Account replacementAccount = replacementAccountMap.get(accountFromCardNumber);
+                    if (replacementAccount != null){
+                        account = Optional.of(replacementAccount) ;
+                    }else {
+                        account = AccountUtil.getAccount(accountFromCardNumber);
+                    }
+                } else {
                     account = AccountUtil.getAccount(accountFromCardNumber);
                 }
-                if (account == null){
+                if (!account.isPresent()){
                     throw new ServiceException("Не найден счет из карты...!!!");
                 }
             }

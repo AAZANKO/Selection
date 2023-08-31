@@ -2,9 +2,12 @@ package by.auditsalution.selection.util;
 
 import by.auditsalution.selection.model.Account;
 import by.auditsalution.selection.model.Card;
+import by.auditsalution.selection.model.SearchType;
 import lombok.experimental.UtilityClass;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @UtilityClass
 public class AccountUtil {
@@ -38,7 +41,7 @@ public class AccountUtil {
             if (splitArrayList.size() == 3){
                 for (Account account : Account.values()) {
                     if (account.getValue().equals(searchAccount)){
-                        return Optional.of(account);
+                        return Optional.ofNullable(account);
                     }
                 }
                 splitArrayList.remove(2);
@@ -47,7 +50,7 @@ public class AccountUtil {
             if (splitArrayList.size() == 2){
                 for (Account account : Account.values()) {
                     if (account.getValue().equals(searchAccount)){
-                        return Optional.of(account);
+                        return Optional.ofNullable(account);
                     }
                 }
                 splitArrayList.remove(1);
@@ -56,18 +59,34 @@ public class AccountUtil {
             if (splitArrayList.size() == 1){
                 for (Account account : Account.values()) {
                     if (account.getValue().equals(searchAccount)){
-                        return Optional.of(account);
+                        return Optional.ofNullable(account);
                     }
                 }
             }
         } else {
             for (Account account : Account.values()) {
                 if (account.getValue().equals(searchAccount)) {
-                    return Optional.of(account);
+                    return Optional.ofNullable(account);
                 }
             }
         }
         return Optional.empty();
+    }
+
+    public static Optional<SearchType> verificationAccount(String account) {
+        Pattern accountsPattern = Pattern.compile("\\d{2}");
+        Pattern subAccountsOneDotsPattern = Pattern.compile("\\d{2}\\.\\d{1,2}");
+        Pattern subAccountsTwoDotsPattern  = Pattern.compile("\\d{2}\\.\\d{1,2}\\.\\d{1,2}");
+        Matcher accountsPatternMatcher = accountsPattern.matcher(account);
+        Matcher subAccountsOneDotsMatcher = subAccountsOneDotsPattern.matcher(account);
+        Matcher subAccountsTwoDotsMatcher = subAccountsTwoDotsPattern.matcher(account);
+        if (account.isBlank()){
+            return Optional.of(SearchType.ALL_ACCOUNTS);
+        } else if (accountsPatternMatcher.matches() | subAccountsOneDotsMatcher.matches() | subAccountsTwoDotsMatcher.matches()) {
+            return Optional.of(SearchType.ONE_ACCOUNTS);
+        } else {
+            return Optional.empty();
+        }
     }
 
 }

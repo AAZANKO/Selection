@@ -26,7 +26,11 @@ public class SaldoController {
 
     private final CardServiceImpl openFileService;
     @GetMapping("/open-saldo")
-    public String getOpenFilePage() {
+    public String getOpenFilePage(Model model, HttpSession session) {
+        if (session.getAttribute("accountListMap") == null){
+            model.addAttribute("message", "Не выбрано ни однаго документа");
+            return "redirect:/open-card";
+        }
         return "OpenSaldo";
     }
 
@@ -44,7 +48,7 @@ public class SaldoController {
 //                    if (session.getAttribute("accountListMap") != null) {
 //                        session.removeAttribute("accountListMap");
 //                    }
-//                    session.setAttribute("accountListMap", accountListMap);
+//                    session.setAttribute("saldoListMap", saldoListMap);
                 } catch (ServiceException e){
                     model.addAttribute("message", e.getMessage());
                 }
@@ -56,6 +60,6 @@ public class SaldoController {
             model.addAttribute("message", "Вы не выбрали файлы...!!!");
             return "OpenSaldo";
         }
-        return "redirect:/input-data";
+        return "redirect:/calculate";
     }
 }

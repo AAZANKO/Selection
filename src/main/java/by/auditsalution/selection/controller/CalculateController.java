@@ -28,13 +28,16 @@ public class CalculateController {
     private final ExcelService excelService;
 
     @GetMapping("/calculate")
-    public String getPackage(HttpSession session){
+    public String getPackage(Model model, HttpSession session){
+        if (session.getAttribute("saldoListMap") == null){
+            model.addAttribute("message", "Не выбрано ни однаго документа");
+            return "redirect:/open-saldo";
+        }
         return "Calculate";
     }
 
     @PostMapping("/calculate")
     public String calculate(HttpSession session, Model model){
-        // TODO: 26.07.2023 Model - RequestScope
         InitialData initialValue = (InitialData) session.getAttribute("initialValue");
         Map<Account, List<Card>> accountListMap = (Map<Account, List<Card>>) session.getAttribute("accountListMap");
         try {

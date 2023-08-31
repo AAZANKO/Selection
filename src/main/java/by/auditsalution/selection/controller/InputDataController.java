@@ -1,8 +1,9 @@
 package by.auditsalution.selection.controller;
 
-import by.auditsalution.selection.model.SearchType;
 import by.auditsalution.selection.model.AuditRisk;
 import by.auditsalution.selection.model.InitialData;
+import by.auditsalution.selection.model.SearchType;
+import by.auditsalution.selection.util.AccountUtil;
 import by.auditsalution.selection.util.PunctuationUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,10 +12,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 public class InputDataController {
@@ -43,21 +46,18 @@ public class InputDataController {
 
     @GetMapping("/input-data")
     public String getInputDataPage(HttpSession session, Model model) {
-        if (session.getAttribute("accountListMap") == null){
-            model.addAttribute("message", "Не выбрано ни однаго документа");
-            return "redirect:/open-saldo";
-        }
         return "InputData";
     }
 
     @PostMapping("/input-data")
-    public String connectToDatabaseController(@RequestParam("risk") AuditRisk risk,
+    public String connectToDatabaseController(HttpServletRequest httpServletRequest, ServletRequest request, @RequestParam("risk") AuditRisk risk,
                                               @RequestParam("factor") String factor,
                                               @RequestParam("level") String level,
                                               @RequestParam("countMaxElement") String countMaxElement,
                                               @RequestParam("countRandomElement") String countRandomElement,
                                               @RequestParam("account") String account,
                                               Model model, HttpSession session) {
+        Optional<SearchType> searchType = AccountUtil.verificationAccount(account);
         if ("".equals(risk)
                 | "".equals(factor.trim())
                 | "".equals(level.trim())
@@ -70,8 +70,8 @@ public class InputDataController {
             model.addAttribute("countMaxElement", countMaxElement);
             model.addAttribute("countRandomElement", countRandomElement);
             model.addAttribute("account", account);
-            return "inputData";
-        } else if (verificationAccount(account) == null) { // TODO: 26.07.2023 >> Optional
+            return "InputData";
+        } else if (!searchType.isPresent()) {
             model.addAttribute("message", "Счет введен не правильно!!!");
             model.addAttribute("risk", risk);
             model.addAttribute("factor", factor);
@@ -79,11 +79,11 @@ public class InputDataController {
             model.addAttribute("countMaxElement", countMaxElement);
             model.addAttribute("countRandomElement", countRandomElement);
             model.addAttribute("account", account);
-            return "inputData";
+            return "InputData";
         } else {
-            InitialData initialValue = createInitializationValue(risk, factor, level, countMaxElement, countRandomElement, account, verificationAccount(account));
+            InitialData initialValue = createInitializationValue(risk, factor, level, countMaxElement, countRandomElement, account, searchType.get());
             session.setAttribute("initialValue", initialValue);
-            return "redirect:/calculate";
+            return "redirect:/replacement-account";
         }
     }
 
@@ -107,21 +107,4 @@ public class InputDataController {
                 .accountType(accountType)
                 .build();
     }
-
-    private SearchType verificationAccount(String account) {
-        Pattern accountsPattern = Pattern.compile("\\d{2}");
-        Pattern subAccountsOneDotsPattern = Pattern.compile("\\d{2}\\.\\d{1,2}");
-        Pattern subAccountsTwoDotsPattern  = Pattern.compile("\\d{2}\\.\\d{1,2}\\.\\d{1,2}");
-        Matcher accountsPatternMatcher = accountsPattern.matcher(account);
-        Matcher subAccountsOneDotsMatcher = subAccountsOneDotsPattern.matcher(account);
-        Matcher subAccountsTwoDotsMatcher = subAccountsTwoDotsPattern.matcher(account);
-        if (account.isBlank()){
-            return SearchType.ALL_ACCOUNTS;
-        } else if (accountsPatternMatcher.matches() | subAccountsOneDotsMatcher.matches() | subAccountsTwoDotsMatcher.matches()) {
-            return SearchType.ONE_ACCOUNTS;
-        } else {
-            return null; // TODO: 26.07.2023 >> Optional
-        }
-    }
-
 }

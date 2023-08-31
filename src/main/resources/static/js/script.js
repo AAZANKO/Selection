@@ -4,11 +4,16 @@ function pushRules(list){
 
     var inputBtn = document.createElement("input");
     inputBtn.type = "text";
-    inputBtn.value = "Remove";
+    // inputBtn.type = "number";
+    inputBtn.name = "oldAccount";
+    inputBtn.value = "";
+    inputBtn.className = "input-replace";
     li.appendChild(inputBtn);
     document.getElementById("list").appendChild(li);
 
     var select = document.createElement('select');
+    select.name = "newAccount";
+    select.className = "select-replace";
     // Use the Option constructor: args text, value, defaultSelected, selected
     var option = new Option('', '', false, false);
     select.appendChild(option);
@@ -62,15 +67,14 @@ function pushRules(list){
     option.text = '91.4';
     select.appendChild(option);
 
-    select.className = "css-class-name";
-
     li.appendChild(select);
     document.getElementById("list").appendChild(li);
 
     var removeBtn = document.createElement("input");
     removeBtn.type = "button";
-    removeBtn.value = "Remove";
+    removeBtn.value = "Удалить";
     removeBtn.onclick = remove;
+    removeBtn.className = "remote-replace";
     li.appendChild(removeBtn);
     document.getElementById("list").appendChild(li);
 }

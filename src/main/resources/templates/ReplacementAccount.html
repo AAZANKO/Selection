@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Исходные данные</title>
+        <link rel="stylesheet" th:href="@{/css/style.css}"/>
+        <link rel="icon" th:href="favicon.ico"/>
+        <script type="text/javascript" th:src="@{/js/script.js}"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div class="content">
+                <h2 style="text-align: center;">Добавление замены счета</h2>
+                <form th:action="@{/replacement-account}" method="post">
+                    <div>
+                        <ul id="list"></ul>
+                        <input type="button" value="Добавить замену счета" onclick="pushRules()">
+                    </div>
+                    <div th:if="${message != null}">
+                        <h1 style="color: brown" th:text="${message}"></h1>
+                    </div>
+                    <input class="input center-block" style="text-align: center;" id="submit" th:type="submit" th:value="Продолжить"/>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

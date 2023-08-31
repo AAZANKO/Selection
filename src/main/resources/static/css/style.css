@@ -60,3 +60,20 @@ TABLE {
     100% { transform: rotate(360deg); }
 }
 
+/*стиль для Добавления замены счета*/
+.input-replace {
+    width: 80px;
+    height: 20px;
+    font-size:14px;
+}
+
+.select-replace {
+    width: 80px;
+    height: 26px;
+    font-size:14px;
+}
+.remote-replace {
+    width: 80px;
+    height: 26px;
+    font-size:14px;
+}
