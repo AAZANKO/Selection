@@ -21,8 +21,13 @@ import static by.auditsalution.selection.model.InputOutputType.OUTPUT;
 @Service
 public class ExcelServiceImpl implements ExcelService {
 
+    private int countMaxElement;
+    private int countRandomElement;
+
     @Override
-    public void writeToExcel(OutputResult outputFormResult, SampleResult sampleResult) throws IOException {
+    public void writeToExcel(OutputResult outputFormResult, SampleResult sampleResult, InitialData initialValue) throws IOException {
+        countRandomElement = initialValue.getCountRandomElement();
+        countMaxElement = initialValue.getCountMaxElement();
 
         Path originalPath = Paths.get("src","main","resources", "template","templateOutputFile.xlsx");
 
@@ -33,16 +38,21 @@ public class ExcelServiceImpl implements ExcelService {
         try (FileInputStream inputStream = new FileInputStream(originalPath.toFile());
              FileOutputStream outputStream = new FileOutputStream(copiedPath.toFile());) {
             workbook = WorkbookFactory.create(inputStream);
-            Sheet sheet = workbook.getSheetAt(1);
 
             // ----- получение стиля ------
+            Sheet sheet = workbook.getSheetAt(1);
             Row existingRow = sheet.getRow(34);
             Cell existingCell = existingRow.getCell(1);
             CellStyle currentStyle = existingCell.getCellStyle();
 
+            insertIntoRandomTable(outputFormResult.getAccountRandomMap(), outputFormResult.getAccountTotalRandomMap(), workbook.getSheetAt(1), currentStyle);
+            insertIntoMaxTable(outputFormResult.getAccountMaxMap(), outputFormResult.getAccountTotalMaxMap(), workbook.getSheetAt(1), currentStyle);
 
-            insertIntoRandomTable(outputFormResult, sheet, currentStyle);
-            insertIntoMaxTable(outputFormResult, sheet, currentStyle);
+            insertIntoRandomTable(outputFormResult.getMinusAccountRandomMap(), outputFormResult.getMinusTotalRandomMap(), workbook.getSheetAt(2), currentStyle);
+            insertIntoMaxTable(outputFormResult.getMinusAccountMaxMap(), outputFormResult.getMinusTotalMaxMap(), workbook.getSheetAt(2), currentStyle);
+
+            insertIntoRandomTable(outputFormResult.getDoubleAccountRandomMap(), outputFormResult.getDoubleTotalRandomMap(), workbook.getSheetAt(3), currentStyle);
+            insertIntoMaxTable(outputFormResult.getDoubleAccountMaxMap(), outputFormResult.getDoubleTotalMaxMap(), workbook.getSheetAt(3), currentStyle);
 
             workbook.write(outputStream);
         } catch (Exception e) {
@@ -54,17 +64,16 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void insertIntoMaxTable(OutputResult outputFormResult, Sheet sheet, CellStyle currentStyle) {
-        Map<Account, List<Card>> accountMaxMap = outputFormResult.getAccountMaxMap();
+    private void insertIntoMaxTable(Map<Account, List<Card>> accountMaxMap, Map<Account, TotalSum> accountTotalMaxMap, Sheet sheet, CellStyle currentStyle) {
         for (Account account : accountMaxMap.keySet()) {
             List<Card> card1CS = accountMaxMap.get(account);
             if (card1CS != null && !card1CS.isEmpty()) {
                 Coordinates coordinates = CoordinatesUtil.getCoordinates(account);
-                int positionRandom = coordinates.getPositionMax();
+                int positionMax = coordinates.getPositionMax();
                 int counter = 1;
                 for (Card card1C : card1CS) {
 
-                    Row row = sheet.createRow(positionRandom);
+                    Row row = sheet.createRow(positionMax);
 
                     Cell cell = row.createCell(0);
                     cell.setCellValue(counter);
@@ -143,14 +152,16 @@ public class ExcelServiceImpl implements ExcelService {
                     cell.setCellStyle(currentStyle);
 
                     counter++;
-                    positionRandom++;
+                    positionMax++;
                 }
+                int positionTotalRandom = coordinates.getPositionMax() + countMaxElement;
+                TotalSum totalSum = accountTotalMaxMap.get(account);
+                insertIntoTotalSummTable(totalSum, positionTotalRandom, sheet, currentStyle);
             }
         }
     }
 
-    private void insertIntoRandomTable(OutputResult outputFormResult, Sheet sheet, CellStyle currentStyle) {
-        Map<Account, List<Card>> accountRandomMap = outputFormResult.getAccountRandomMap();
+    private void insertIntoRandomTable(Map<Account, List<Card>> accountRandomMap, Map<Account, TotalSum> accountTotalRandomMap, Sheet sheet, CellStyle currentStyle) {
         for (Account account : accountRandomMap.keySet()) {
             List<Card> card1CS = accountRandomMap.get(account);
             if (card1CS != null && !card1CS.isEmpty()) {
@@ -158,7 +169,6 @@ public class ExcelServiceImpl implements ExcelService {
                 int positionRandom = coordinates.getPositionRandom();
                 int counter = 1;
                 for (Card card1C : card1CS) {
-
                     Row row = sheet.createRow(positionRandom);
 
                     Cell cell = row.createCell(0);
@@ -240,12 +250,96 @@ public class ExcelServiceImpl implements ExcelService {
                     counter++;
                     positionRandom++;
                 }
+                int positionTotalRandom = coordinates.getPositionRandom() + countRandomElement;
+                TotalSum totalSum = accountTotalRandomMap.get(account);
+                insertIntoTotalSummTable(totalSum, positionTotalRandom, sheet, currentStyle);
             }
         }
     }
 
+    private void insertIntoTotalSummTable(TotalSum totalSum, int positionRandom, Sheet sheet, CellStyle currentStyle) {
+        Row row = sheet.createRow(positionRandom);
+
+        Cell cell = row.createCell(0);
+        cell.setCellValue("x");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(1);
+        cell.setCellValue("Итого:");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(2);
+        cell.setCellValue("x");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(3);
+        cell.setCellValue("x");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(4);
+        cell.setCellValue(totalSum.getDebit() + totalSum.getCredit()); // сумма
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(5);
+        cell.setCellValue("x");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(6);
+        cell.setCellValue("x");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(7);
+        cell.setCellValue("x");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(8);
+        cell.setCellValue("x");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(9);
+        cell.setCellValue("x"); // +
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(10);
+        cell.setCellValue("x"); // +
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(11);
+        cell.setCellValue(totalSum.getDebit() + totalSum.getCredit());
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(12);
+        cell.setCellValue("х"); // +
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(13);
+        cell.setCellValue("x");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(14);
+        cell.setCellValue("x");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(15);
+        cell.setCellValue("x");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(16);
+        cell.setCellValue("x");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(17);
+        cell.setCellValue("x");
+        cell.setCellStyle(currentStyle);
+
+        cell = row.createCell(18);
+        cell.setCellValue("-");
+        cell.setCellStyle(currentStyle);
+    }
 
 
+
+    // TODO: 16.09.2023 Добавитть реализацию САЛЬДО !!!!!!!!!!!!!!!!!
     private void insertIntoSaldoMaxTable(OutputResult outputFormResult, Sheet sheet, CellStyle currentStyle) {
 
     }

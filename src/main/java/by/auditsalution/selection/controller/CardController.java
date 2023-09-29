@@ -35,6 +35,16 @@ public class CardController {
         return "OpenCard";
     }
 
+    /**
+     * spring.servlet.multipart.max-file-size установлено на 128 КБ, что означает, что общий размер файла не может превышать 128 КБ.
+     * spring.servlet.multipart.max-request-size имеет значение 128 КБ, что означает, что общий размер запроса не может превышать 128 КБ.multipart/form-data
+     *
+     * @param files
+     * @param model
+     * @param session
+     * @return
+     */
+
     @PostMapping("/open-card")
     public String postSubmit(@RequestParam("files") List<MultipartFile> files, Model model, HttpSession session) {
         Map<String, Account> replacementAccountMap = (Map<String, Account>) session.getAttribute("replacementAccountMap");
@@ -43,14 +53,15 @@ public class CardController {
                 try {
                     String pathToFiles = FilePathUtil.getPathAndCreatePackage(INPUT.getDescription(), "card");
                     FileUtil.copy(files, pathToFiles);
-                    List<Card1CTemp> card1CTempList = openFileService.createCardTempFromFiles(pathToFiles);
-                    Map<Account, List<Card>> accountListMap = openFileService.convertToCards(card1CTempList, replacementAccountMap);
+                    List<Card1CTemp> card1CTempList = openFileService.loadFile(pathToFiles);
+                    Map<Account, List<Card>> accountListMap = openFileService.convert(card1CTempList, replacementAccountMap);
                     if (session.getAttribute("accountListMap") != null) {
                         session.removeAttribute("accountListMap");
                     }
                     session.setAttribute("accountListMap", accountListMap);
                 } catch (ServiceException e){
                     model.addAttribute("message", e.getMessage());
+                    return "OpenCard";
                 }
             } else {
                 model.addAttribute("message", "Один или несколько файлов не являются файлами Excel");

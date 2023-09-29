@@ -29,10 +29,12 @@ public class CalculateController {
 
     @GetMapping("/calculate")
     public String getPackage(Model model, HttpSession session){
-        if (session.getAttribute("saldoListMap") == null){
-            model.addAttribute("message", "Не выбрано ни однаго документа");
-            return "redirect:/open-saldo";
-        }
+
+        // TODO: 16.09.2023 закомитанно на время теста!
+//        if (session.getAttribute("saldoListMap") == null){
+//            model.addAttribute("message", "Не выбрано ни однаго документа");
+//            return "redirect:/open-saldo";
+//        }
         return "Calculate";
     }
 

@@ -2,6 +2,7 @@ package by.auditsalution.selection.util;
 
 import lombok.experimental.UtilityClass;
 
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,13 +18,13 @@ public class Card1CUtil {
         return false;
     }
 
-    public static String getAccountFromCardNumber(String value) {
+    public static Optional<String> getAccountFromCardNumber(String value) {
         Pattern pattern = Pattern.compile("\\d{2}\\.?.*");
         Matcher matcher = pattern.matcher(value);
         if (matcher.find()) {
-            return matcher.group(0);
+            return Optional.ofNullable(matcher.group(0));
         }
-        return "";
+        return Optional.empty();
     }
 
 }

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static by.auditsalution.selection.model.ExcelFormatType.XLS;
 import static by.auditsalution.selection.model.ExcelFormatType.XLSX;
@@ -41,7 +42,7 @@ public class CardServiceImpl implements CardService {
     public static final int FIRST_SHEET = 0;
 
     @Override
-    public List<Card1CTemp> createCardTempFromFiles(String inputFilePath) throws ServiceException {
+    public List<Card1CTemp> loadFile(String inputFilePath) throws ServiceException {
         File dir = new File(inputFilePath);
         List<File> listFile = Arrays.asList(dir.listFiles());
         List<Card1CTemp> card1CTempList = new ArrayList<>();
@@ -64,15 +65,19 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public Map<Account, List<Card>> convertToCards(List<Card1CTemp> card1CTempList, Map<String, Account> replacementAccountMap) {
-        Version1C version1C = Version1CUtil.checkVersion1C(card1CTempList);
-        if (Version1C.VERSION_1C_7.equals(version1C)) {
-            return cardConverter.getCard1CV7Of(card1CTempList, replacementAccountMap);
-        } else if (Version1C.VERSION_1C_8.equals(version1C)){
-            return cardConverter.getCard1CV8Of(card1CTempList);
+    public Map<Account, List<Card>> convert(List<Card1CTemp> card1CTempList, Map<String, Account> replacementAccountMap) {
+        Optional<Version1C> version1C = Version1CUtil.checkVersion1C(card1CTempList);
+        Map<Account, List<Card>> accountListMap = null;
+        if (version1C.isPresent()){
+            if (Version1C.VERSION_1C_7.equals(version1C.get())) {
+                accountListMap = cardConverter.getCard1CV7Of(card1CTempList, replacementAccountMap);
+            } else if (Version1C.VERSION_1C_8.equals(version1C.get())){
+                accountListMap = cardConverter.getCard1CV8Of(card1CTempList, replacementAccountMap);
+            }
         } else {
             throw new ServiceException("Не удалось определить версию 1С");
         }
+        return accountListMap;
     }
 
     private ArrayList<Card1CTemp> getTempCards(File file) throws ServiceException {
@@ -137,6 +142,9 @@ public class CardServiceImpl implements CardService {
                 break;
             case 9:
                 card1CTemp.setCell9(extractedValueByString(cell));
+                break;
+            case 10:
+                card1CTemp.setCell10(extractedValueByString(cell));
                 break;
             default:
                 break;

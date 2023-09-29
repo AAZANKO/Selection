@@ -21,5 +21,6 @@ public class Card1CTemp {
     private String cell7;
     private String cell8;
     private String cell9;
+    private String cell10;
 
 }
