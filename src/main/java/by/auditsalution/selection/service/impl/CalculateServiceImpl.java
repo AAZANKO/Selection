@@ -127,6 +127,9 @@ public class CalculateServiceImpl implements CalculateService {
         outputFormResult.setDoubleTotalRandomMap(doubleTotalRandomMap);
 
         try {
+
+
+
             excelService.writeToExcel(outputFormResult, sampleResult, initialValue);
         } catch (Exception e){
             throw new ServiceException("Не удалось записать файл");
